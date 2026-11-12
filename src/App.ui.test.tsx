@@ -4,12 +4,18 @@ import { describe, expect, test } from "vitest";
 
 import App from "./App";
 
+/** The shelf is the default view. These tests are about the cards, so switch first. */
+async function renderCards() {
+  render(<App />);
+  await userEvent.click(screen.getByRole("button", { name: "Cards" }));
+}
+
 const titles = () =>
   screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
 
 describe("filter and search", () => {
   test("the status filter shows only books with that status", async () => {
-    render(<App />);
+    await renderCards();
     await userEvent.click(screen.getByRole("button", { name: "Done" }));
     expect(screen.getAllByRole("listitem")).toHaveLength(5);
     expect(screen.getByRole("button", { name: "Done" })).toHaveAttribute(
@@ -19,14 +25,14 @@ describe("filter and search", () => {
   });
 
   test("filter and search work together", async () => {
-    render(<App />);
+    await renderCards();
     await userEvent.click(screen.getByRole("button", { name: "Done" }));
     await userEvent.type(screen.getByLabelText("Search by title"), "the");
     expect(titles()).toEqual(["The Hobbit", "Klara and the Sun"]);
   });
 
   test("shows the empty state when nothing matches", async () => {
-    render(<App />);
+    await renderCards();
     await userEvent.type(screen.getByLabelText("Search by title"), "zzzz");
     expect(screen.queryAllByRole("listitem")).toHaveLength(0);
     expect(screen.getByText("No books found")).toBeInTheDocument();
@@ -35,7 +41,7 @@ describe("filter and search", () => {
 
 describe("add, edit and delete", () => {
   test("adds a book and shows a toast", async () => {
-    render(<App />);
+    await renderCards();
     await userEvent.click(screen.getByRole("button", { name: "+ Add book" }));
     const dialog = await screen.findByRole("dialog", { name: "Add book" });
     await userEvent.type(within(dialog).getByLabelText("Title"), "New Book");
@@ -49,7 +55,7 @@ describe("add, edit and delete", () => {
   });
 
   test("does not save without title and author, and focuses the first error", async () => {
-    render(<App />);
+    await renderCards();
     await userEvent.click(screen.getByRole("button", { name: "+ Add book" }));
     const dialog = await screen.findByRole("dialog");
     await userEvent.click(within(dialog).getByRole("button", { name: "Save" }));
@@ -68,7 +74,7 @@ describe("add, edit and delete", () => {
   });
 
   test("edits a book, including the status select", async () => {
-    render(<App />);
+    await renderCards();
     await userEvent.click(screen.getByRole("button", { name: "Edit Gone Girl" }));
     const dialog = await screen.findByRole("dialog", { name: "Edit book" });
     const title = within(dialog).getByLabelText("Title");
@@ -87,7 +93,7 @@ describe("add, edit and delete", () => {
   });
 
   test("asks before deleting, then deletes and shows a toast", async () => {
-    render(<App />);
+    await renderCards();
     await userEvent.click(screen.getByRole("button", { name: "Delete Dune" }));
     const dialog = await screen.findByRole("alertdialog");
     expect(dialog).toHaveTextContent("Dune");

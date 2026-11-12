@@ -26,6 +26,7 @@ Approach for this branch: **shadcn/ui** (on Tailwind CSS v4).
 - Use the semantic token classes (`bg-background`, `text-muted-foreground`, `border-input`...), never raw palette colors or arbitrary values.
 - Use `cn()` from `src/lib/utils.ts` to merge classes. No inline `style` props, no other CSS libraries.
 - App components stay in `src/components` (one per file) and compose the `ui` components. Do not repeat long class lists, extract a component.
+- The bookshelf, dark mode (`.dark` class on `<html>`) and extras use extra tokens next to the shadcn ones (`--wood`, `--gold`, `--spine-*`...), mapped in `@theme inline`.
 - The CLI writes the `ui` files. They may contain things we would not write ourselves (for example an inline `style` in `sonner.tsx`). Leave those as generated.
 - Dialog, Select and Toast come from shadcn (Base UI and sonner), so we do not build our own.
 
