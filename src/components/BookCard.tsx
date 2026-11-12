@@ -20,11 +20,15 @@ export default function BookCard({ book, onEdit, onDelete }: BookCardProps) {
       </div>
       {book.notes && <p className="text-sm text-slate-700">{book.notes}</p>}
       <div className="mt-auto flex gap-2 pt-2">
-        <Button onClick={() => onEdit(book)}>
-          Edit<span className="sr-only">: {book.title}</span>
+        <Button aria-label={`Edit ${book.title}`} onClick={() => onEdit(book)}>
+          Edit
         </Button>
-        <Button variant="danger" onClick={() => onDelete(book)}>
-          Delete<span className="sr-only">: {book.title}</span>
+        <Button
+          variant="danger"
+          aria-label={`Delete ${book.title}`}
+          onClick={() => onDelete(book)}
+        >
+          Delete
         </Button>
       </div>
     </li>

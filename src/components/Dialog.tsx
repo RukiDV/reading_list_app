@@ -16,19 +16,33 @@ export default function Dialog({ title, onClose, children }: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
 
+  const onCloseRef = useRef(onClose);
+  useLayoutEffect(() => {
+    onCloseRef.current = onClose;
+  });
+
   useLayoutEffect(() => {
     const dialog = ref.current;
     if (!dialog) return;
+    const handleClose = () => {
+      // React StrictMode runs this effect twice in development. The `close`
+      // event of the first, cleaned-up run arrives after the dialog was
+      // opened again, so ignore it while the dialog is open.
+      if (!dialog.open) onCloseRef.current();
+    };
+    dialog.addEventListener("close", handleClose);
     dialog.showModal();
-    // Closing before the node is removed lets the browser restore the focus.
-    return () => dialog.close();
+    return () => {
+      dialog.removeEventListener("close", handleClose);
+      // Closing before the node is removed lets the browser restore the focus.
+      dialog.close();
+    };
   }, []);
 
   return (
     <dialog
       ref={ref}
       aria-labelledby={titleId}
-      onClose={onClose}
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
