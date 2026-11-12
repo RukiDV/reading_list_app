@@ -54,7 +54,7 @@ export default function Dialog({ title, onClose, children }: DialogProps) {
           onClose();
         }
       }}
-      className="m-auto w-full max-w-md rounded-lg p-0 backdrop:bg-ink/50"
+      className="m-auto w-full max-w-md rounded-lg bg-surface p-0 text-ink backdrop:bg-scrim"
     >
       <div className="flex flex-col gap-4 p-6">
         <h2 id={titleId} className="text-xl font-semibold">

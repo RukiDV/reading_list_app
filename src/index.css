@@ -33,7 +33,13 @@
   --color-wood-light: oklch(0.55 0.08 60);
   --color-wood-dark: oklch(0.3 0.06 50);
   --color-gold: oklch(0.86 0.12 88);
+  /* Book spines look the same in light and dark mode. */
+  --color-spine-want: oklch(0.38 0.12 250);
+  --color-spine-reading: oklch(0.4 0.09 70);
+  --color-spine-done: oklch(0.38 0.1 150);
   --color-lamp: oklch(0.92 0.14 88);
+  /* Dim layer behind dialogs. Dark in both modes. */
+  --color-scrim: oklch(0.2 0.04 266 / 0.55);
 
   /* Animations. Used as `animate-cover-open` and `animate-detail-in`. */
   --animate-cover-open: cover-open 700ms ease-out both;
@@ -94,6 +100,40 @@
   }
 }
 
+/* How strong the light of the lamp is. Off by day. */
+:root {
+  --lamp-glow: 15%;
+}
+
+/* Dark mode: the same token names with night values. The lamp is on. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-brand-600: oklch(0.55 0.2 265);
+  --color-brand-700: oklch(0.62 0.19 265);
+  --color-status-want-bg: oklch(0.3 0.06 250);
+  --color-status-want-fg: oklch(0.85 0.08 250);
+  --color-status-reading-bg: oklch(0.33 0.06 80);
+  --color-status-reading-fg: oklch(0.88 0.1 90);
+  --color-status-done-bg: oklch(0.3 0.06 150);
+  --color-status-done-fg: oklch(0.85 0.09 150);
+  --color-page: oklch(0.18 0.02 265);
+  --color-surface: oklch(0.23 0.025 265);
+  --color-surface-hover: oklch(0.29 0.03 265);
+  --color-ink: oklch(0.95 0.01 265);
+  --color-muted: oklch(0.75 0.03 265);
+  --color-line: oklch(0.32 0.03 265);
+  --color-line-strong: oklch(0.42 0.035 265);
+  --color-star: oklch(0.78 0.15 75);
+  --color-star-empty: oklch(0.42 0.035 265);
+  --color-danger-600: oklch(0.55 0.2 27);
+  --color-danger-700: oklch(0.62 0.19 27);
+  --color-shelf-back: oklch(0.22 0.025 60);
+  --color-wood: oklch(0.32 0.05 55);
+  --color-wood-light: oklch(0.4 0.06 60);
+  --color-wood-dark: oklch(0.22 0.04 50);
+  --lamp-glow: 70%;
+}
+
 /* Wood with a grain: thin lines of different lengths on a shaded base. */
 @utility wood {
   background-color: var(--color-wood);
@@ -122,7 +162,7 @@
 @utility shelf-glow {
   background-image: radial-gradient(
     ellipse 22rem 12rem at 88% 0%,
-    color-mix(in oklab, var(--color-lamp) 55%, transparent),
+    color-mix(in oklab, var(--color-lamp) var(--lamp-glow), transparent),
     transparent
   );
 }

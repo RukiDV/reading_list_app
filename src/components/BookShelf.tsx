@@ -11,6 +11,8 @@ type BookShelfProps = {
   onSelect: (id: string | null) => void;
   onEdit: (book: Book) => void;
   onDelete: (book: Book) => void;
+  lampOn: boolean;
+  onToggleLamp: () => void;
 };
 
 export default function BookShelf({
@@ -19,6 +21,8 @@ export default function BookShelf({
   onSelect,
   onEdit,
   onDelete,
+  lampOn,
+  onToggleLamp,
 }: BookShelfProps) {
   const panelId = useId();
   const selected = books.find((book) => book.id === selectedId);
@@ -31,7 +35,7 @@ export default function BookShelf({
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 shelf-glow"
           />
-          <ShelfLamp />
+          <ShelfLamp on={lampOn} onToggle={onToggleLamp} />
           <ul
             aria-label="Bookshelf"
             className="relative flex flex-wrap content-start gap-x-1 px-2 shelf-boards sm:px-4"
