@@ -15,6 +15,7 @@ type DialogProps = {
 export default function Dialog({ title, onClose, children }: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
+  const pressStartedOnBackdrop = useRef(false);
 
   const onCloseRef = useRef(onClose);
   useLayoutEffect(() => {
@@ -43,8 +44,15 @@ export default function Dialog({ title, onClose, children }: DialogProps) {
     <dialog
       ref={ref}
       aria-labelledby={titleId}
+      onMouseDown={(event) => {
+        pressStartedOnBackdrop.current = event.target === event.currentTarget;
+      }}
       onClick={(event) => {
-        if (event.target === event.currentTarget) onClose();
+        // Close only if the press and the release were both on the backdrop.
+        // Selecting text in a field and letting go outside must not close it.
+        if (event.target === event.currentTarget && pressStartedOnBackdrop.current) {
+          onClose();
+        }
       }}
       className="m-auto w-full max-w-md rounded-lg p-0 backdrop:bg-ink/50"
     >

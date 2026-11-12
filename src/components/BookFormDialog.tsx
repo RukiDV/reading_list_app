@@ -33,7 +33,14 @@ export default function BookFormDialog({
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSubmitted(true);
-    if (titleError || authorError) return;
+    if (titleError || authorError) {
+      // Move the focus to the first field with an error.
+      const firstInvalidId = titleError ? "title" : "author";
+      event.currentTarget
+        .querySelector<HTMLInputElement>(`#${firstInvalidId}`)
+        ?.focus();
+      return;
+    }
     onSave({
       title: title.trim(),
       author: author.trim(),
