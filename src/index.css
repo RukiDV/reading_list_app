@@ -27,7 +27,59 @@
   --color-danger-600: oklch(0.5 0.21 27);
   --color-danger-700: oklch(0.43 0.19 27);
 
+  /* Bookshelf: wood colors and the size of one shelf row. */
+  --color-shelf-back: oklch(0.94 0.02 75);
+  --color-wood: oklch(0.42 0.07 55);
+  --color-wood-light: oklch(0.55 0.08 60);
+
+  /* Animations. Used as `animate-cover-open` and `animate-detail-in`. */
+  --animate-cover-open: cover-open 700ms ease-out both;
+  --animate-detail-in: detail-in 400ms ease-out both;
+
+  @keyframes cover-open {
+    from {
+      transform: rotateY(-110deg);
+    }
+    to {
+      transform: rotateY(0deg);
+    }
+  }
+
+  @keyframes detail-in {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Not part of a theme namespace, so these are plain variables. */
+@theme static {
+  --shelf-row: 14rem;
+  --shelf-board: 0.75rem;
+}
+
+/* Draws one wooden board at the bottom of every shelf row. */
+@utility shelf-boards {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(var(--shelf-row) - var(--shelf-board)),
+    var(--color-wood-light) calc(var(--shelf-row) - var(--shelf-board)),
+    var(--color-wood) calc(var(--shelf-row) - var(--shelf-board) + 0.125rem),
+    var(--color-wood) var(--shelf-row)
+  );
+}
+
+/* Tailwind has no writing-mode utility, so this one is ours. Used on book spines. */
+@utility writing-vertical {
+  writing-mode: vertical-rl;
 }
 
 @layer base {

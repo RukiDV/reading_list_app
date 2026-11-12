@@ -3,12 +3,14 @@ import { useEffect, useRef, useState } from "react";
 import { filterBooks } from "./books";
 import BookFormDialog from "./components/BookFormDialog";
 import BookGrid from "./components/BookGrid";
+import BookShelf from "./components/BookShelf";
 import ConfirmDeleteDialog from "./components/ConfirmDeleteDialog";
 import EmptyState from "./components/EmptyState";
 import Header from "./components/Header";
 import Toast from "./components/Toast";
 import type { ToastMessage } from "./components/Toast";
 import Toolbar from "./components/Toolbar";
+import type { ViewMode } from "./components/ViewToggle";
 import type { Book, NewBook, StatusFilter } from "./types";
 import { useBooks } from "./useBooks";
 
@@ -23,6 +25,8 @@ export default function App() {
   const { books, addBook, updateBook, deleteBook } = useBooks();
   const [status, setStatus] = useState<StatusFilter>("all");
   const [query, setQuery] = useState("");
+  const [view, setView] = useState<ViewMode>("shelf");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [dialog, setDialog] = useState<DialogState>(null);
   const [toast, setToast] = useState<ToastMessage | null>(null);
   const nextToastId = useRef(0);
@@ -67,17 +71,27 @@ export default function App() {
         <Toolbar
           query={query}
           status={status}
+          view={view}
+          onViewChange={setView}
           onQueryChange={setQuery}
           onStatusChange={setStatus}
         />
-        {visibleBooks.length > 0 ? (
+        {visibleBooks.length === 0 ? (
+          <EmptyState />
+        ) : view === "shelf" ? (
+          <BookShelf
+            books={visibleBooks}
+            selectedId={selectedId}
+            onSelect={setSelectedId}
+            onEdit={(book) => setDialog({ type: "form", book })}
+            onDelete={(book) => setDialog({ type: "delete", book })}
+          />
+        ) : (
           <BookGrid
             books={visibleBooks}
             onEdit={(book) => setDialog({ type: "form", book })}
             onDelete={(book) => setDialog({ type: "delete", book })}
           />
-        ) : (
-          <EmptyState />
         )}
       </main>
       {dialog?.type === "form" && (

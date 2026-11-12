@@ -15,12 +15,18 @@ beforeAll(() => {
   };
 });
 
+/** Shelf is the default view. These tests are about the cards, so switch first. */
+async function renderCards() {
+  render(<App />);
+  await userEvent.click(screen.getByRole("button", { name: "Cards" }));
+}
+
 const titles = () =>
   screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
 
 describe("filter and search", () => {
   test("the status filter shows only books with that status", async () => {
-    render(<App />);
+    await renderCards();
     await userEvent.click(screen.getByRole("button", { name: "Done" }));
     expect(screen.getAllByRole("listitem")).toHaveLength(5);
     expect(screen.getByRole("button", { name: "Done" })).toHaveAttribute(
@@ -30,13 +36,13 @@ describe("filter and search", () => {
   });
 
   test("the search finds books by title", async () => {
-    render(<App />);
+    await renderCards();
     await userEvent.type(screen.getByLabelText("Search by title"), "dune");
     expect(titles()).toEqual(["Dune"]);
   });
 
   test("filter and search work together", async () => {
-    render(<App />);
+    await renderCards();
     await userEvent.click(screen.getByRole("button", { name: "Done" }));
     await userEvent.type(screen.getByLabelText("Search by title"), "the");
     // Four titles contain "the", but only these two are done.
@@ -44,7 +50,7 @@ describe("filter and search", () => {
   });
 
   test("shows the empty state when nothing matches", async () => {
-    render(<App />);
+    await renderCards();
     await userEvent.type(screen.getByLabelText("Search by title"), "zzzz");
     expect(screen.queryAllByRole("listitem")).toHaveLength(0);
     expect(screen.getByText("No books found")).toBeInTheDocument();
@@ -53,7 +59,7 @@ describe("filter and search", () => {
 
 describe("add, edit and delete", () => {
   test("adds a book and shows a toast", async () => {
-    render(<App />);
+    await renderCards();
     await userEvent.click(screen.getByRole("button", { name: "+ Add book" }));
     const dialog = screen.getByRole("dialog", { name: "Add book" });
     await userEvent.type(within(dialog).getByLabelText("Title"), "New Book");
@@ -67,7 +73,7 @@ describe("add, edit and delete", () => {
   });
 
   test("does not save without title and author, and focuses the first error", async () => {
-    render(<App />);
+    await renderCards();
     await userEvent.click(screen.getByRole("button", { name: "+ Add book" }));
     const dialog = screen.getByRole("dialog");
     await userEvent.click(within(dialog).getByRole("button", { name: "Save" }));
@@ -84,7 +90,7 @@ describe("add, edit and delete", () => {
   });
 
   test("edits a book and shows a toast", async () => {
-    render(<App />);
+    await renderCards();
     await userEvent.click(screen.getByRole("button", { name: "Edit Dune" }));
     const dialog = screen.getByRole("dialog", { name: "Edit book" });
     const title = within(dialog).getByLabelText("Title");
@@ -99,7 +105,7 @@ describe("add, edit and delete", () => {
   });
 
   test("asks before deleting, then deletes and shows a toast", async () => {
-    render(<App />);
+    await renderCards();
     await userEvent.click(screen.getByRole("button", { name: "Delete Dune" }));
     const dialog = screen.getByRole("dialog", { name: "Delete book" });
     expect(dialog).toHaveTextContent("Dune");
@@ -118,7 +124,7 @@ describe("add, edit and delete", () => {
 
 describe("dialog backdrop", () => {
   test("closes when the press and the release are on the backdrop", async () => {
-    render(<App />);
+    await renderCards();
     await userEvent.click(screen.getByRole("button", { name: "+ Add book" }));
     const dialog = screen.getByRole("dialog");
     fireEvent.mouseDown(dialog);
@@ -127,7 +133,7 @@ describe("dialog backdrop", () => {
   });
 
   test("stays open when the press started inside, for example selecting text", async () => {
-    render(<App />);
+    await renderCards();
     await userEvent.click(screen.getByRole("button", { name: "+ Add book" }));
     const dialog = screen.getByRole("dialog");
     fireEvent.mouseDown(within(dialog).getByLabelText("Title"));
@@ -138,7 +144,7 @@ describe("dialog backdrop", () => {
 
 describe("toast", () => {
   test("a repeated message is a new toast", async () => {
-    render(<App />);
+    await renderCards();
     const add = async (title: string) => {
       await userEvent.click(screen.getByRole("button", { name: "+ Add book" }));
       const dialog = screen.getByRole("dialog");
