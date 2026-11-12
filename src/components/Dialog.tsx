@@ -46,7 +46,7 @@ export default function Dialog({ title, onClose, children }: DialogProps) {
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
-      className="m-auto w-full max-w-md rounded-lg p-0 backdrop:bg-slate-900/50"
+      className="m-auto w-full max-w-md rounded-lg p-0 backdrop:bg-ink/50"
     >
       <div className="flex flex-col gap-4 p-6">
         <h2 id={titleId} className="text-xl font-semibold">

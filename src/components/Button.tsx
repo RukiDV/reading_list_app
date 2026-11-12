@@ -7,10 +7,10 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const VARIANT_CLASSES: Record<Variant, string> = {
-  primary: "bg-brand-600 text-white hover:bg-brand-700",
+  primary: "bg-brand-600 text-on-accent hover:bg-brand-700",
   secondary:
-    "bg-white text-slate-900 ring-1 ring-inset ring-slate-300 hover:bg-slate-100",
-  danger: "bg-danger-600 text-white hover:bg-danger-700",
+    "bg-surface text-ink ring-1 ring-inset ring-line-strong hover:bg-surface-hover",
+  danger: "bg-danger-600 text-on-accent hover:bg-danger-700",
 };
 
 export default function Button({

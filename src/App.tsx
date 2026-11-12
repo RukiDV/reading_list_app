@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { filterBooks } from "./books";
 import BookFormDialog from "./components/BookFormDialog";
@@ -7,6 +7,7 @@ import ConfirmDeleteDialog from "./components/ConfirmDeleteDialog";
 import EmptyState from "./components/EmptyState";
 import Header from "./components/Header";
 import Toast from "./components/Toast";
+import type { ToastMessage } from "./components/Toast";
 import Toolbar from "./components/Toolbar";
 import type { Book, NewBook, StatusFilter } from "./types";
 import { useBooks } from "./useBooks";
@@ -23,7 +24,14 @@ export default function App() {
   const [status, setStatus] = useState<StatusFilter>("all");
   const [query, setQuery] = useState("");
   const [dialog, setDialog] = useState<DialogState>(null);
-  const [toast, setToast] = useState<string | null>(null);
+  const [toast, setToast] = useState<ToastMessage | null>(null);
+  const nextToastId = useRef(0);
+
+  // A new object for every message, so the timer restarts even for the same text.
+  function showToast(text: string) {
+    nextToastId.current += 1;
+    setToast({ id: nextToastId.current, text });
+  }
 
   useEffect(() => {
     if (!toast) return;
@@ -37,10 +45,10 @@ export default function App() {
     if (dialog?.type !== "form") return;
     if (dialog.book) {
       updateBook(dialog.book.id, data);
-      setToast("Book updated");
+      showToast("Book updated");
     } else {
       addBook(data);
-      setToast("Book added");
+      showToast("Book added");
     }
     setDialog(null);
   }
@@ -48,7 +56,7 @@ export default function App() {
   function handleDelete() {
     if (dialog?.type !== "delete") return;
     deleteBook(dialog.book.id);
-    setToast("Book deleted");
+    showToast("Book deleted");
     setDialog(null);
   }
 
@@ -86,7 +94,7 @@ export default function App() {
           onClose={() => setDialog(null)}
         />
       )}
-      <Toast message={toast} />
+      <Toast toast={toast} />
     </div>
   );
 }

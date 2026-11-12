@@ -9,7 +9,7 @@ type FieldProps = {
 
 /** Shared classes for inputs, selects and textareas. */
 export const CONTROL_CLASSES =
-  "w-full rounded-md bg-white px-3 py-2 text-sm ring-1 ring-inset ring-slate-300";
+  "w-full rounded-md bg-surface px-3 py-2 text-sm ring-1 ring-inset ring-line-strong";
 
 export default function Field({ id, label, error, children }: FieldProps) {
   return (

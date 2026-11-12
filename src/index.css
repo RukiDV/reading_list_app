@@ -2,7 +2,6 @@
 
 /* All colors and the spacing base live here. Do not invent values in components. */
 @theme {
-  --color-brand-50: oklch(0.97 0.02 265);
   --color-brand-600: oklch(0.5 0.2 265);
   --color-brand-700: oklch(0.43 0.2 265);
 
@@ -13,6 +12,18 @@
   --color-status-done-bg: oklch(0.93 0.06 150);
   --color-status-done-fg: oklch(0.38 0.1 150);
 
+  /* Neutrals and surfaces. Components use these names, never raw palette colors. */
+  --color-page: oklch(0.984 0.003 248);
+  --color-surface: oklch(1 0 0);
+  --color-surface-hover: oklch(0.968 0.007 248);
+  --color-ink: oklch(0.208 0.042 266);
+  --color-muted: oklch(0.446 0.043 257);
+  --color-line: oklch(0.929 0.013 256);
+  --color-line-strong: oklch(0.869 0.022 253);
+  --color-on-accent: oklch(1 0 0);
+  --color-star: oklch(0.666 0.179 58);
+  --color-star-empty: oklch(0.869 0.022 253);
+
   --color-danger-600: oklch(0.5 0.21 27);
   --color-danger-700: oklch(0.43 0.19 27);
 
@@ -21,7 +32,7 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 font-sans;
+    @apply bg-page text-ink font-sans;
   }
 
   :focus-visible {

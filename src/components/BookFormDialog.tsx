@@ -6,6 +6,7 @@ import type { Book, NewBook, Status } from "../types";
 import Button from "./Button";
 import Dialog from "./Dialog";
 import Field, { CONTROL_CLASSES } from "./Field";
+import TextField from "./TextField";
 
 type BookFormDialogProps = {
   /** The book to edit, or `null` to add a new one. */
@@ -45,28 +46,20 @@ export default function BookFormDialog({
   return (
     <Dialog title={book ? "Edit book" : "Add book"} onClose={onClose}>
       <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <Field id="title" label="Title" error={submitted ? titleError : undefined}>
-          <input
-            id="title"
-            value={title}
-            required
-            aria-invalid={submitted && !!titleError}
-            aria-describedby={submitted && titleError ? "title-error" : undefined}
-            onChange={(event) => setTitle(event.target.value)}
-            className={CONTROL_CLASSES}
-          />
-        </Field>
-        <Field id="author" label="Author" error={submitted ? authorError : undefined}>
-          <input
-            id="author"
-            value={author}
-            required
-            aria-invalid={submitted && !!authorError}
-            aria-describedby={submitted && authorError ? "author-error" : undefined}
-            onChange={(event) => setAuthor(event.target.value)}
-            className={CONTROL_CLASSES}
-          />
-        </Field>
+        <TextField
+          id="title"
+          label="Title"
+          value={title}
+          error={submitted ? titleError : undefined}
+          onChange={setTitle}
+        />
+        <TextField
+          id="author"
+          label="Author"
+          value={author}
+          error={submitted ? authorError : undefined}
+          onChange={setAuthor}
+        />
         <Field id="status" label="Status">
           <select
             id="status"
