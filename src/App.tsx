@@ -12,6 +12,9 @@ import type { ToastMessage } from "./components/Toast";
 import Toolbar from "./components/Toolbar";
 import type { ViewMode } from "./components/ViewToggle";
 import type { Book, NewBook, StatusFilter } from "./types";
+import { pickNextBook } from "./pickBook";
+import { sortBooks } from "./sortBooks";
+import type { SortKey } from "./sortBooks";
 import { useBooks } from "./useBooks";
 import { useTheme } from "./useTheme";
 
@@ -27,6 +30,7 @@ export default function App() {
   const { books, addBook, updateBook, deleteBook } = useBooks();
   const [status, setStatus] = useState<StatusFilter>("all");
   const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<SortKey>("added");
   const [view, setView] = useState<ViewMode>("shelf");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [dialog, setDialog] = useState<DialogState>(null);
@@ -45,7 +49,26 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [toast]);
 
-  const visibleBooks = filterBooks(books, { status, query });
+  const visibleBooks = sortBooks(filterBooks(books, { status, query }), sort);
+  const stats = {
+    total: books.length,
+    done: books.filter((book) => book.status === "done").length,
+    reading: books.filter((book) => book.status === "reading").length,
+  };
+
+  // Pull a random "want to read" book off the shelf. Clear the filters so it
+  // is visible.
+  function handlePickNext() {
+    const pick = pickNextBook(books, selectedId);
+    if (!pick) {
+      showToast("No books on your want-to-read list");
+      return;
+    }
+    setStatus("all");
+    setQuery("");
+    setView("shelf");
+    setSelectedId(pick.id);
+  }
 
   function handleSave(data: NewBook) {
     if (dialog?.type !== "form") return;
@@ -74,6 +97,9 @@ export default function App() {
           query={query}
           status={status}
           view={view}
+          sort={sort}
+          onSortChange={setSort}
+          onPickNext={handlePickNext}
           onViewChange={setView}
           onQueryChange={setQuery}
           onStatusChange={setStatus}
@@ -87,6 +113,7 @@ export default function App() {
             onSelect={setSelectedId}
             onEdit={(book) => setDialog({ type: "form", book })}
             onDelete={(book) => setDialog({ type: "delete", book })}
+            stats={stats}
             lampOn={theme === "dark"}
             onToggleLamp={toggleTheme}
           />

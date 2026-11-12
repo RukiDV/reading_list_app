@@ -1,7 +1,9 @@
 import { STATUS_LABELS } from "../books";
+import type { SortKey } from "../sortBooks";
 import type { StatusFilter } from "../types";
 import { CONTROL_CLASSES } from "./Field";
 import Button from "./Button";
+import SortSelect from "./SortSelect";
 import ViewToggle from "./ViewToggle";
 import type { ViewMode } from "./ViewToggle";
 
@@ -9,6 +11,9 @@ type ToolbarProps = {
   query: string;
   status: StatusFilter;
   view: ViewMode;
+  sort: SortKey;
+  onSortChange: (sort: SortKey) => void;
+  onPickNext: () => void;
   onViewChange: (view: ViewMode) => void;
   onQueryChange: (query: string) => void;
   onStatusChange: (status: StatusFilter) => void;
@@ -25,6 +30,9 @@ export default function Toolbar({
   query,
   status,
   view,
+  sort,
+  onSortChange,
+  onPickNext,
   onViewChange,
   onQueryChange,
   onStatusChange,
@@ -56,7 +64,11 @@ export default function Toolbar({
           </Button>
         ))}
       </div>
-      <ViewToggle view={view} onViewChange={onViewChange} />
+      <div className="flex flex-wrap items-center gap-2">
+        <SortSelect sort={sort} onSortChange={onSortChange} />
+        <Button onClick={onPickNext}>Pick my next book</Button>
+        <ViewToggle view={view} onViewChange={onViewChange} />
+      </div>
     </div>
   );
 }

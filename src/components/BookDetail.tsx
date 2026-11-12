@@ -28,6 +28,8 @@ export default function BookDetail({
     const reduceMotion = window.matchMedia?.(
       "(prefers-reduced-motion: reduce)"
     ).matches;
+    // Move the focus into the panel, so the next Tab reaches Edit and Delete.
+    ref.current?.focus({ preventScroll: true });
     ref.current?.scrollIntoView?.({
       block: "nearest",
       behavior: reduceMotion ? "auto" : "smooth",
@@ -38,6 +40,10 @@ export default function BookDetail({
     <section
       ref={ref}
       id={id}
+      tabIndex={-1}
+      onKeyDown={(event) => {
+        if (event.key === "Escape") onClose();
+      }}
       aria-label={`Details: ${book.title}`}
       className="mt-4 flex flex-col gap-4 rounded-lg bg-surface p-4 ring-1 ring-line motion-safe:animate-detail-in sm:flex-row"
     >

@@ -38,6 +38,8 @@
   --color-spine-reading: oklch(0.4 0.09 70);
   --color-spine-done: oklch(0.38 0.1 150);
   --color-lamp: oklch(0.92 0.14 88);
+  /* The bookmark ribbon in books you are reading. */
+  --color-ribbon: oklch(0.55 0.2 27);
   /* Dim layer behind dialogs. Dark in both modes. */
   --color-scrim: oklch(0.2 0.04 266 / 0.55);
 
@@ -212,6 +214,11 @@
     4px 0 0 var(--color-line-strong),
     5px 0 0 var(--color-surface),
     0.75rem 1rem 1.5rem -0.5rem rgb(0 0 0 / 0.45);
+}
+
+/* A ribbon end with a V-shaped notch. */
+@utility ribbon-end {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
 }
 
 /* Tailwind has no writing-mode utility, so this one is ours. Used on book spines. */

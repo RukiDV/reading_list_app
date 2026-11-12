@@ -1,9 +1,10 @@
-import { useId } from "react";
+import { useEffect, useId, useRef } from "react";
 
 import type { Book } from "../types";
 import BookDetail from "./BookDetail";
 import BookSpine from "./BookSpine";
 import ShelfLamp from "./ShelfLamp";
+import ShelfPlaque from "./ShelfPlaque";
 
 type BookShelfProps = {
   books: Book[];
@@ -11,6 +12,8 @@ type BookShelfProps = {
   onSelect: (id: string | null) => void;
   onEdit: (book: Book) => void;
   onDelete: (book: Book) => void;
+  /** Counts of all books, not only the ones in view. */
+  stats: { total: number; done: number; reading: number };
   lampOn: boolean;
   onToggleLamp: () => void;
 };
@@ -21,11 +24,26 @@ export default function BookShelf({
   onSelect,
   onEdit,
   onDelete,
+  stats,
   lampOn,
   onToggleLamp,
 }: BookShelfProps) {
   const panelId = useId();
   const selected = books.find((book) => book.id === selectedId);
+  const listRef = useRef<HTMLUListElement>(null);
+  const hadSelection = useRef(false);
+
+  const focusOpenSpine = () =>
+    listRef.current?.querySelector<HTMLElement>('[aria-expanded="true"]')?.focus();
+
+  // If the open book disappears (it was deleted), the focus would fall to the
+  // page. Put it on the first book instead.
+  useEffect(() => {
+    if (hadSelection.current && !selected && document.activeElement === document.body) {
+      listRef.current?.querySelector<HTMLElement>("button")?.focus();
+    }
+    hadSelection.current = Boolean(selected);
+  }, [selected]);
 
   return (
     <div>
@@ -37,6 +55,7 @@ export default function BookShelf({
           />
           <ShelfLamp on={lampOn} onToggle={onToggleLamp} />
           <ul
+            ref={listRef}
             aria-label="Bookshelf"
             className="relative flex flex-wrap content-start gap-x-1 px-2 shelf-boards sm:px-4"
           >
@@ -54,6 +73,9 @@ export default function BookShelf({
           </ul>
         </div>
       </div>
+      <div className="flex justify-center rounded-b-lg px-4 py-3 shadow-xl wood">
+        <ShelfPlaque {...stats} />
+      </div>
       {selected && (
         <BookDetail
           key={selected.id}
@@ -61,7 +83,10 @@ export default function BookShelf({
           book={selected}
           onEdit={onEdit}
           onDelete={onDelete}
-          onClose={() => onSelect(null)}
+          onClose={() => {
+            focusOpenSpine();
+            onSelect(null);
+          }}
         />
       )}
     </div>
