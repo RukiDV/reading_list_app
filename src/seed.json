@@ -1,0 +1,12 @@
+[
+  { "id": "b1", "title": "Dune", "author": "Frank Herbert", "status": "done", "rating": 5, "notes": "Read it twice. The first chapters are slow, the rest is worth it." },
+  { "id": "b2", "title": "The Hobbit", "author": "J. R. R. Tolkien", "status": "done", "rating": 4, "notes": "" },
+  { "id": "b3", "title": "Gone Girl", "author": "Gillian Flynn", "status": "want-to-read", "rating": null, "notes": "Recommended by a friend." },
+  { "id": "b4", "title": "Neuromancer", "author": "William Gibson", "status": "reading", "rating": null, "notes": "Dense, but the atmosphere is great." },
+  { "id": "b5", "title": "Sapiens", "author": "Yuval Noah Harari", "status": "done", "rating": 4, "notes": "Good for a long train ride." },
+  { "id": "b6", "title": "The Name of the Wind", "author": "Patrick Rothfuss", "status": "want-to-read", "rating": null, "notes": "" },
+  { "id": "b7", "title": "Project Hail Mary", "author": "Andy Weir", "status": "reading", "rating": null, "notes": "Hard to put down." },
+  { "id": "b8", "title": "The Pragmatic Programmer", "author": "Andrew Hunt and David Thomas", "status": "want-to-read", "rating": null, "notes": "For the capstone." },
+  { "id": "b9", "title": "Educated", "author": "Tara Westover", "status": "done", "rating": 5, "notes": "" },
+  { "id": "b10", "title": "Klara and the Sun", "author": "Kazuo Ishiguro", "status": "done", "rating": 3, "notes": "Beautiful, a bit sad." }
+]
