@@ -8,8 +8,8 @@ type BookSpineProps = {
   onSelect: (book: Book) => void;
 };
 
-const SPINE_WIDTHS = ["w-10", "w-12", "w-14"];
-const SPINE_HEIGHTS = ["h-40", "h-44", "h-48"];
+const SPINE_WIDTHS = ["w-8 sm:w-10", "w-10 sm:w-12", "w-12 sm:w-14", "w-14 sm:w-16"];
+const SPINE_HEIGHTS = ["h-36 sm:h-44", "h-40 sm:h-48", "h-44 sm:h-52", "h-48 sm:h-56"];
 
 /** The same book always gets the same size, so the shelf does not jump around. */
 function hash(text: string): number {
@@ -28,20 +28,21 @@ export default function BookSpine({
 }: BookSpineProps) {
   const seed = hash(book.id);
   const width = SPINE_WIDTHS[seed % SPINE_WIDTHS.length];
-  const height = SPINE_HEIGHTS[Math.floor(seed / 3) % SPINE_HEIGHTS.length];
+  const height = SPINE_HEIGHTS[Math.floor(seed / 4) % SPINE_HEIGHTS.length];
   const lift = selected
-    ? "-translate-y-4 rotate-3"
-    : "hover:-translate-y-2 focus-visible:-translate-y-2";
+    ? "-translate-y-5 rotate-3 scale-105 shadow-2xl z-10"
+    : "shadow-lg hover:-translate-y-2 focus-visible:-translate-y-2";
 
   return (
     <li className="flex h-(--shelf-row) items-end pb-(--shelf-board)">
       <button
         type="button"
         aria-label={`${book.title} by ${book.author}`}
+        title={book.title}
         aria-expanded={selected}
         aria-controls={selected ? panelId : undefined}
         onClick={() => onSelect(book)}
-        className={`${width} ${height} ${STATUS_SOLID_CLASSES[book.status]} ${lift} origin-bottom rounded-t-sm border-y-4 border-on-accent/30 px-1 py-2 font-serif text-sm font-semibold text-on-accent shadow-md writing-vertical motion-safe:transition-transform motion-safe:duration-300`}
+        className={`${width} ${height} ${STATUS_SOLID_CLASSES[book.status]} ${lift} spine-finish relative origin-bottom rounded-t-sm pt-8 pr-1 pb-8 pl-1 font-serif text-sm sm:text-base font-semibold text-gold writing-vertical motion-safe:transition-all motion-safe:duration-300`}
       >
         <span className="block truncate">{book.title}</span>
       </button>
