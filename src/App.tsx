@@ -1,21 +1,145 @@
-import { useBooks } from "./useBooks";
+import { useEffect, useRef, useState } from "react";
 
-// This is the unstyled starting point. It only shows that the data flows.
-// Build your UI here and in new components, see SPEC.md.
+import { filterBooks } from "./books";
+import BookFormDialog from "./components/BookFormDialog";
+import BookGrid from "./components/BookGrid";
+import BookShelf from "./components/BookShelf";
+import ConfirmDeleteDialog from "./components/ConfirmDeleteDialog";
+import EmptyState from "./components/EmptyState";
+import Header from "./components/Header";
+import Toast from "./components/Toast";
+import type { ToastMessage } from "./components/Toast";
+import Toolbar from "./components/Toolbar";
+import type { ViewMode } from "./components/ViewToggle";
+import type { Book, NewBook, StatusFilter } from "./types";
+import { pickNextBook } from "./pickBook";
+import { sortBooks } from "./sortBooks";
+import type { SortKey } from "./sortBooks";
+import { useBooks } from "./useBooks";
+import { useTheme } from "./useTheme";
+
+type DialogState =
+  | { type: "form"; book: Book | null }
+  | { type: "delete"; book: Book }
+  | null;
+
+const TOAST_DURATION_MS = 3000;
+
 export default function App() {
-  const { books } = useBooks();
+  const { theme, toggleTheme } = useTheme();
+  const { books, addBook, updateBook, deleteBook } = useBooks();
+  const [status, setStatus] = useState<StatusFilter>("all");
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<SortKey>("added");
+  const [view, setView] = useState<ViewMode>("shelf");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [dialog, setDialog] = useState<DialogState>(null);
+  const [toast, setToast] = useState<ToastMessage | null>(null);
+  const nextToastId = useRef(0);
+
+  // A new object for every message, so the timer restarts even for the same text.
+  function showToast(text: string) {
+    nextToastId.current += 1;
+    setToast({ id: nextToastId.current, text });
+  }
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), TOAST_DURATION_MS);
+    return () => clearTimeout(timer);
+  }, [toast]);
+
+  const visibleBooks = sortBooks(filterBooks(books, { status, query }), sort);
+  const stats = {
+    total: books.length,
+    done: books.filter((book) => book.status === "done").length,
+    reading: books.filter((book) => book.status === "reading").length,
+  };
+
+  // Pull a random "want to read" book off the shelf. Clear the filters so it
+  // is visible.
+  function handlePickNext() {
+    const pick = pickNextBook(books, selectedId);
+    if (!pick) {
+      showToast("No books on your want-to-read list");
+      return;
+    }
+    setStatus("all");
+    setQuery("");
+    setView("shelf");
+    setSelectedId(pick.id);
+  }
+
+  function handleSave(data: NewBook) {
+    if (dialog?.type !== "form") return;
+    if (dialog.book) {
+      updateBook(dialog.book.id, data);
+      showToast("Book updated");
+    } else {
+      addBook(data);
+      showToast("Book added");
+    }
+    setDialog(null);
+  }
+
+  function handleDelete() {
+    if (dialog?.type !== "delete") return;
+    deleteBook(dialog.book.id);
+    showToast("Book deleted");
+    setDialog(null);
+  }
 
   return (
-    <main>
-      <h1>Reading List</h1>
-      <p>{books.length} books</p>
-      <ul>
-        {books.map((book) => (
-          <li key={book.id}>
-            {book.title} by {book.author} ({book.status})
-          </li>
-        ))}
-      </ul>
-    </main>
+    <div className="mx-auto max-w-6xl px-4 pb-16">
+      <Header theme={theme} onToggleTheme={toggleTheme} onAdd={() => setDialog({ type: "form", book: null })} />
+      <main>
+        <Toolbar
+          query={query}
+          status={status}
+          view={view}
+          sort={sort}
+          onSortChange={setSort}
+          onPickNext={handlePickNext}
+          onViewChange={setView}
+          onQueryChange={setQuery}
+          onStatusChange={setStatus}
+        />
+        {visibleBooks.length === 0 ? (
+          <EmptyState />
+        ) : view === "shelf" ? (
+          <BookShelf
+            books={visibleBooks}
+            selectedId={selectedId}
+            onSelect={setSelectedId}
+            onEdit={(book) => setDialog({ type: "form", book })}
+            onDelete={(book) => setDialog({ type: "delete", book })}
+            stats={stats}
+            lampOn={theme === "dark"}
+            onToggleLamp={toggleTheme}
+          />
+        ) : (
+          <BookGrid
+            books={visibleBooks}
+            onEdit={(book) => setDialog({ type: "form", book })}
+            onDelete={(book) => setDialog({ type: "delete", book })}
+          />
+        )}
+      </main>
+      {dialog?.type === "form" && (
+        <BookFormDialog
+          book={dialog.book}
+          onSave={handleSave}
+          onClose={() => setDialog(null)}
+        />
+      )}
+      {dialog?.type === "delete" && (
+        <ConfirmDeleteDialog
+          book={dialog.book}
+          onConfirm={handleDelete}
+          onClose={() => setDialog(null)}
+        />
+      )}
+      <Toast toast={toast} />
+    </div>
   );
 }

@@ -1,1 +1,237 @@
-/* Intentionally empty. Your styling approach goes here (or somewhere else, depending on the approach). */
+@import "tailwindcss";
+
+/* All colors and the spacing base live here. Do not invent values in components. */
+@theme {
+  --color-brand-600: oklch(0.5 0.2 265);
+  --color-brand-700: oklch(0.43 0.2 265);
+
+  --color-status-want-bg: oklch(0.93 0.04 250);
+  --color-status-want-fg: oklch(0.38 0.12 250);
+  --color-status-reading-bg: oklch(0.94 0.08 90);
+  --color-status-reading-fg: oklch(0.4 0.09 70);
+  --color-status-done-bg: oklch(0.93 0.06 150);
+  --color-status-done-fg: oklch(0.38 0.1 150);
+
+  /* Neutrals and surfaces. Components use these names, never raw palette colors. */
+  --color-page: oklch(0.984 0.003 248);
+  --color-surface: oklch(1 0 0);
+  --color-surface-hover: oklch(0.968 0.007 248);
+  --color-ink: oklch(0.208 0.042 266);
+  --color-muted: oklch(0.446 0.043 257);
+  --color-line: oklch(0.929 0.013 256);
+  --color-line-strong: oklch(0.869 0.022 253);
+  --color-on-accent: oklch(1 0 0);
+  --color-star: oklch(0.666 0.179 58);
+  --color-star-empty: oklch(0.869 0.022 253);
+
+  --color-danger-600: oklch(0.5 0.21 27);
+  --color-danger-700: oklch(0.43 0.19 27);
+
+  /* Bookshelf: wood colors and the size of one shelf row. */
+  --color-shelf-back: oklch(0.94 0.02 75);
+  --color-wood: oklch(0.42 0.07 55);
+  --color-wood-light: oklch(0.55 0.08 60);
+  --color-wood-dark: oklch(0.3 0.06 50);
+  --color-gold: oklch(0.86 0.12 88);
+  /* Book spines look the same in light and dark mode. */
+  --color-spine-want: oklch(0.38 0.12 250);
+  --color-spine-reading: oklch(0.4 0.09 70);
+  --color-spine-done: oklch(0.38 0.1 150);
+  --color-lamp: oklch(0.92 0.14 88);
+  /* The bookmark ribbon in books you are reading. */
+  --color-ribbon: oklch(0.55 0.2 27);
+  /* Dim layer behind dialogs. Dark in both modes. */
+  --color-scrim: oklch(0.2 0.04 266 / 0.55);
+
+  /* Animations. Used as `animate-cover-open` and `animate-detail-in`. */
+  --animate-cover-open: cover-open 700ms ease-out both;
+  --animate-detail-in: detail-in 400ms ease-out both;
+  /* The lamp swings a few times when the page loads, then rests. */
+  --animate-sway: sway 3.5s ease-out 1 both;
+
+  @keyframes cover-open {
+    from {
+      transform: rotateY(-110deg);
+    }
+    to {
+      transform: rotateY(0deg);
+    }
+  }
+
+  @keyframes sway {
+    0% {
+      transform: rotate(0deg);
+    }
+    15% {
+      transform: rotate(4deg);
+    }
+    40% {
+      transform: rotate(-2.5deg);
+    }
+    65% {
+      transform: rotate(1.2deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+
+  @keyframes detail-in {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Not part of a theme namespace, so these are plain variables. */
+@theme static {
+  --shelf-row: 14rem;
+  --shelf-board: 0.75rem;
+}
+
+@media (min-width: 40rem) {
+  :root {
+    --shelf-row: 17rem;
+  }
+}
+
+/* How strong the light of the lamp is. Off by day. */
+:root {
+  --lamp-glow: 15%;
+}
+
+/* Dark mode: the same token names with night values. The lamp is on. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-brand-600: oklch(0.55 0.2 265);
+  --color-brand-700: oklch(0.62 0.19 265);
+  --color-status-want-bg: oklch(0.3 0.06 250);
+  --color-status-want-fg: oklch(0.85 0.08 250);
+  --color-status-reading-bg: oklch(0.33 0.06 80);
+  --color-status-reading-fg: oklch(0.88 0.1 90);
+  --color-status-done-bg: oklch(0.3 0.06 150);
+  --color-status-done-fg: oklch(0.85 0.09 150);
+  --color-page: oklch(0.18 0.02 265);
+  --color-surface: oklch(0.23 0.025 265);
+  --color-surface-hover: oklch(0.29 0.03 265);
+  --color-ink: oklch(0.95 0.01 265);
+  --color-muted: oklch(0.75 0.03 265);
+  --color-line: oklch(0.32 0.03 265);
+  --color-line-strong: oklch(0.42 0.035 265);
+  --color-star: oklch(0.78 0.15 75);
+  --color-star-empty: oklch(0.42 0.035 265);
+  --color-danger-600: oklch(0.55 0.2 27);
+  --color-danger-700: oklch(0.62 0.19 27);
+  --color-shelf-back: oklch(0.22 0.025 60);
+  --color-wood: oklch(0.32 0.05 55);
+  --color-wood-light: oklch(0.4 0.06 60);
+  --color-wood-dark: oklch(0.22 0.04 50);
+  --lamp-glow: 70%;
+}
+
+/* Wood with a grain: thin lines of different lengths on a shaded base. */
+@utility wood {
+  background-color: var(--color-wood);
+  background-image:
+    repeating-linear-gradient(to bottom, rgb(0 0 0 / 0.07) 0, rgb(0 0 0 / 0.07) 1px, transparent 1px, transparent 4px),
+    repeating-linear-gradient(to bottom, rgb(255 255 255 / 0.05) 0, rgb(255 255 255 / 0.05) 1px, transparent 1px, transparent 9px),
+    linear-gradient(to right, var(--color-wood-dark), var(--color-wood) 20%, var(--color-wood-light) 55%, var(--color-wood));
+}
+
+/* Draws one wooden board at the bottom of every shelf row, with a soft
+   shadow above it where the books stand. */
+@utility shelf-boards {
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(var(--shelf-row) - var(--shelf-board) - 1rem),
+      rgb(0 0 0 / 0.12) calc(var(--shelf-row) - var(--shelf-board)),
+      var(--color-wood-light) calc(var(--shelf-row) - var(--shelf-board)),
+      var(--color-wood) calc(var(--shelf-row) - var(--shelf-board) + 0.125rem),
+      var(--color-wood-dark) var(--shelf-row)
+    );
+}
+
+/* A soft warm light that falls from the lamp onto the back of the shelf. */
+@utility shelf-glow {
+  background-image: radial-gradient(
+    ellipse 22rem 12rem at 88% 0%,
+    color-mix(in oklab, var(--color-lamp) var(--lamp-glow), transparent),
+    transparent
+  );
+}
+
+/* A rounded book spine: shading from the left to the right, and gold bands
+   near the top and the bottom. */
+@utility spine-finish {
+  background-image:
+    linear-gradient(
+      to right,
+      rgb(0 0 0 / 0.4),
+      transparent 20%,
+      rgb(255 255 255 / 0.14) 42%,
+      transparent 62%,
+      rgb(0 0 0 / 0.35)
+    ),
+    linear-gradient(
+      to bottom,
+      transparent 0.75rem,
+      var(--color-gold) 0.75rem,
+      var(--color-gold) 1rem,
+      transparent 1rem,
+      transparent 1.25rem,
+      var(--color-gold) 1.25rem,
+      var(--color-gold) 1.375rem,
+      transparent 1.375rem
+    ),
+    linear-gradient(
+      to top,
+      transparent 0.75rem,
+      var(--color-gold) 0.75rem,
+      var(--color-gold) 1rem,
+      transparent 1rem,
+      transparent 1.25rem,
+      var(--color-gold) 1.25rem,
+      var(--color-gold) 1.375rem,
+      transparent 1.375rem
+    );
+}
+
+/* The paper edge of a book, seen from the side, plus its shadow. */
+@utility book-pages {
+  box-shadow:
+    1px 0 0 var(--color-surface),
+    2px 0 0 var(--color-line-strong),
+    3px 0 0 var(--color-surface),
+    4px 0 0 var(--color-line-strong),
+    5px 0 0 var(--color-surface),
+    0.75rem 1rem 1.5rem -0.5rem rgb(0 0 0 / 0.45);
+}
+
+/* A ribbon end with a V-shaped notch. */
+@utility ribbon-end {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
+}
+
+/* Tailwind has no writing-mode utility, so this one is ours. Used on book spines. */
+@utility writing-vertical {
+  writing-mode: vertical-rl;
+}
+
+@layer base {
+  body {
+    @apply bg-page text-ink font-sans;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-600;
+  }
+}
