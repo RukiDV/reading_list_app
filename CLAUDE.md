@@ -19,13 +19,13 @@ A reading list built with React 19, TypeScript and Vite. No backend, the data is
 
 ## Styling
 
-<!-- TODO: Replace this section with the rules for the approach you chose. -->
+Approach on this branch (`variant-tailwind`): **Tailwind CSS v4 only**.
 
-Choose exactly one styling approach per branch and write it down here **before** you build. Example for Tailwind:
-
-- Use Tailwind CSS v4 only. No `tailwind.config.js`, configure with `@theme` in `src/index.css`.
+- No `tailwind.config.js`. Configure with `@theme` in `src/index.css`.
+- Brand, status, danger colors and fonts are tokens in `@theme`. Use them (`bg-brand-600`, `bg-status-done-bg`). Do not invent new colors or use arbitrary values like `p-[13px]`; use the default Tailwind spacing scale.
 - No inline `style` props, no other CSS libraries.
-- Reuse components. Do not repeat long class lists, extract a component.
+- Reuse components. Do not repeat long class lists, extract a component (`Button`, `Dialog`, `StatusBadge`).
+- Dialogs use the native `<dialog>` element (focus trap, Escape and focus return come from the browser).
 
 Rules for every approach:
 
